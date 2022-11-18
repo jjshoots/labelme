@@ -50,14 +50,15 @@ def shape_to_mask(
 
 def shapes_to_segmap(img_shape, shapes, label_name_to_value):
     assert "__ignore__" in label_name_to_value, "Need to have '__ignore__' class in label_name_to_value"
+
     min_val = min(label_name_to_value.values())
     max_val = max(label_name_to_value.values())
-    if max_val - min_val < 255:
-        dtype = np.int8
-    else:
-        dtype = np.int32
 
-    segmap = np.zeros((*img_shape[:2], len(label_name_to_value)), dtype=dtype)
+    assert min_val == 0, f"Minimum value in label_name_to_value must be 0, currently it's {min_val}"
+
+    dtype = np.int8 if max_val < 255 else np.int32
+
+    segmap = np.zeros((*img_shape[:2], max_val), dtype=dtype)
 
     for shape in shapes:
         points = shape["points"]
