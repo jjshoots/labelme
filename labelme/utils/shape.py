@@ -58,7 +58,7 @@ def shapes_to_segmap(img_shape, shapes, label_name_to_value):
 
     dtype = np.int8 if max_val < 255 else np.int32
 
-    segmap = np.zeros((*img_shape[:2], max_val), dtype=dtype)
+    segmap = np.zeros((*img_shape[:2], max_val+1), dtype=dtype)
 
     for shape in shapes:
         points = shape["points"]
