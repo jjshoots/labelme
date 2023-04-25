@@ -64,6 +64,13 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
+        "--savenolabels",
+        dest="save_no_labels",
+        action="store_true",
+        help="saves the image to JSON even when not segmented",
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         "--nosortlabels",
         dest="sort_labels",
         action="store_false",

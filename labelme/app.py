@@ -761,6 +761,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 "is ignored and output filename is automatically "
                 "set as IMAGE_BASENAME.json."
             )
+        if "save_no_labels" in self._config:
+            assert self._config["auto_save"] >= self._config["save_no_labels"], "Use --autosave when using --savenolabels"
         self.output_file = output_file
         self.output_dir = output_dir
 
@@ -1477,7 +1479,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self.fileListWidget.setCurrentRow(self.imageList.index(filename))
             self.fileListWidget.repaint()
-            return
+            return False
 
         self.resetState()
         self.canvas.setEnabled(False)
@@ -1552,6 +1554,13 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.labelFile.flags is not None:
                 flags.update(self.labelFile.flags)
         self.loadFlags(flags)
+        # optionally save the image even with no modifications
+        if self._config["save_no_labels"] or self._config["auto_save"] or self.actions.saveAuto.isChecked():
+            label_file = osp.splitext(self.imagePath)[0] + ".json"
+            if self.output_dir:
+                label_file_without_path = osp.basename(label_file)
+                label_file = osp.join(self.output_dir, label_file_without_path)
+            self.saveLabels(label_file)
         if self._config["keep_prev"] and self.noShapes():
             self.loadShapes(prev_shapes, replace=False)
             self.setDirty()
